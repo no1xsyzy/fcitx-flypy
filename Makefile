@@ -2,6 +2,8 @@
 list:
 	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs
 
+bodies := $(wildcard flypy.body.*)
+
 .PHONY: all
 all: flypy.mb
 
@@ -11,6 +13,10 @@ flypy.mb: flypy.mb.txt
 
 flypy.mb.txt: flypy.head flypy.body
 	@cat flypy.head flypy.body > flypy.mb.txt
+	
+flypy.body: $(bodies)
+	@echo concatenating $^ into flypy.body
+	@cat $^ > flypy.body
 
 .PHONY: install
 install: _install_icon _install_conf _install_mb
